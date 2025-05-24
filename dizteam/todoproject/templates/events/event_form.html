@@ -1,0 +1,134 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{% if object.id %}Edit Event{% else %}Create Event{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h2>{% if object.id %}Edit Event{% else %}Create Event{% endif %}</h2>
+    </div>
+    <div class="col-md-4 text-end">
+      <a href="{% url 'event_list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Events
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        <div class="mb-3">
+          <label for="id_title" class="form-label">Title</label>
+          {{ form.title.errors }}
+          <input type="text" name="title" id="id_title" class="form-control {% if form.title.errors %}is-invalid{% endif %}" value="{{ form.title.value|default:'' }}" required>
+          {% if form.title.errors %}
+            <div class="invalid-feedback">{{ form.title.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_description" class="form-label">Description</label>
+          {{ form.description.errors }}
+          <textarea name="description" id="id_description" class="form-control {% if form.description.errors %}is-invalid{% endif %}" rows="3">{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+            <div class="invalid-feedback">{{ form.description.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_start_time" class="form-label">Start Time</label>
+          {{ form.start_time.errors }}
+          <input type="datetime-local" name="start_time" id="id_start_time" class="form-control {% if form.start_time.errors %}is-invalid{% endif %}" value="{{ form.start_time.value|date:'Y-m-d\\TH:i'|default:'' }}" required>
+          {% if form.start_time.errors %}
+            <div class="invalid-feedback">{{ form.start_time.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_end_time" class="form-label">End Time</label>
+          {{ form.end_time.errors }}
+          <input type="datetime-local" name="end_time" id="id_end_time" class="form-control {% if form.end_time.errors %}is-invalid{% endif %}" value="{{ form.end_time.value|date:'Y-m-d\\TH:i'|default:'' }}" required>
+          {% if form.end_time.errors %}
+            <div class="invalid-feedback">{{ form.end_time.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_location" class="form-label">Location</label>
+          {{ form.location.errors }}
+          <input type="text" name="location" id="id_location" class="form-control {% if form.location.errors %}is-invalid{% endif %}" value="{{ form.location.value|default:'' }}">
+          {% if form.location.errors %}
+            <div class="invalid-feedback">{{ form.location.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3 form-check">
+          {{ form.all_day.errors }}
+          <input type="checkbox" name="all_day" id="id_all_day" class="form-check-input {% if form.all_day.errors %}is-invalid{% endif %}" {% if form.all_day.value %}checked{% endif %}>
+          <label for="id_all_day" class="form-check-label">All day event</label>
+          {% if form.all_day.errors %}
+            <div class="invalid-feedback">{{ form.all_day.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_repeat" class="form-label">Repeat</label>
+          {{ form.repeat.errors }}
+          <select name="repeat" id="id_repeat" class="form-select {% if form.repeat.errors %}is-invalid{% endif %}">
+            {% for value, text in form.fields.repeat.choices %}
+              <option value="{{ value }}" {% if form.repeat.value == value %}selected{% endif %}>{{ text }}</option>
+            {% endfor %}
+          </select>
+          {% if form.repeat.errors %}
+            <div class="invalid-feedback">{{ form.repeat.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3" id="repeat_until_container" {% if form.repeat.value == 'none' %}style="display:none;"{% endif %}>
+          <label for="id_repeat_until" class="form-label">Repeat Until</label>
+          {{ form.repeat_until.errors }}
+          <input type="date" name="repeat_until" id="id_repeat_until" class="form-control {% if form.repeat_until.errors %}is-invalid{% endif %}" value="{{ form.repeat_until.value|date:'Y-m-d'|default:'' }}">
+          {% if form.repeat_until.errors %}
+            <div class="invalid-feedback">{{ form.repeat_until.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_notify_before" class="form-label">Notification Time (minutes before event)</label>
+          {{ form.notify_before.errors }}
+          <input type="number" name="notify_before" id="id_notify_before" class="form-control {% if form.notify_before.errors %}is-invalid{% endif %}" value="{{ form.notify_before.value|default:30 }}" min="0" max="1440">
+          {% if form.notify_before.errors %}
+            <div class="invalid-feedback">{{ form.notify_before.errors.0 }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Save Event</button>
+        </div>
+        
+        <script>
+          document.getElementById('id_repeat').addEventListener('change', function() {
+            var repeatUntilContainer = document.getElementById('repeat_until_container');
+            if (this.value === 'none') {
+              repeatUntilContainer.style.display = 'none';
+            } else {
+              repeatUntilContainer.style.display = 'block';
+            }
+          });
+        </script>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} 

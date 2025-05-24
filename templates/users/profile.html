@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Profile</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">User Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid mb-3" style="max-width: 150px; max-height: 150px;">
+                    <h4>{{ user.username }}</h4>
+                </div>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Registered on:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                <p><strong>Last login:</strong> {{ user.last_login|date:"M d, Y H:i" }}</p>
+                <p><strong>Bio:</strong> {{ user.profile.bio|default:"" }}</p>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Task Statistics</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Total tasks:</strong> {{ completed_tasks_count|add:active_tasks_count }}</p>
+                <p><strong>Completed tasks:</strong> {{ completed_tasks_count }}</p>
+                <p><strong>Active tasks:</strong> {{ active_tasks_count }}</p>
+                
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ completion_percentage }}%" aria-valuenow="{{ completion_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ completion_percentage|floatformat:0 }}%</div>
+                </div>
+                <p class="text-center mt-2"><small>Completion rate</small></p>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'task_list' %}" class="btn btn-outline-primary">My Tasks</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
